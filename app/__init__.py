@@ -6,11 +6,10 @@ from random import seed
 db = SQLAlchemy()
 
 
-def create_app():
+def create_app(config: str):
     """Construct the core application."""
     app = Flask(__name__, instance_relative_config=False)
-    app.config.from_object('config.Config')
-    # Session(app)
+    app.config.from_object(config)
     db.init_app(app)
     seed(1)
 
