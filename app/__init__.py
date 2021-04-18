@@ -9,7 +9,9 @@ db = SQLAlchemy()
 def create_app(config: str):
     """Construct the core application."""
     app = Flask(__name__, instance_relative_config=False)
-    app.config.from_object(config)
+    if config is not None:
+        app.config.from_object(config)
+        # app.config.from_pyfile(config)
     db.init_app(app)
     seed(1)
 

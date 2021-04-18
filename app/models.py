@@ -1,19 +1,21 @@
 from app import db
-from sqlalchemy.dialects.postgresql import JSON
 
 
-class Result(db.Model):
-    __tablename__ = 'results'
+class People(db.Model):
+    __tablename__ = 'people'
 
     id = db.Column(db.Integer, primary_key=True)
-    url = db.Column(db.String())
-    result_all = db.Column(JSON)
-    result_no_stop_words = db.Column(JSON)
+    full_name = db.Column(db.String(120), nullable=False)
+    date_of_birth = db.Column(db.DateTime)
+    place_of_birth = db.Column(db.String())
+    genres = db.Column(db)
+    total_movies = db.Column(db.String(10))
 
-    def __init__(self, url, result_all, result_no_stop_words):
-        self.url = url
-        self.result_all = result_all
-        self.result_no_stop_words = result_no_stop_words
+
+    def __init__(self, full_name, date_of_birth, notify=False):
+        self.full_name = full_name
+        self.date_of_birth = date_of_birth
+        self.notify = notify
 
     def __repr__(self):
-        return '<id {}>'.format(self.id)
+        return '<Birthday %r %r %r>' % (self.name, self.bday, self.notify)
