@@ -1,6 +1,6 @@
 from flask_script import Manager, prompt_bool
 from app import create_app, db
-from app.models import Result
+from app.models import People
 from flask_migrate import Migrate, MigrateCommand
 
 from os import environ
