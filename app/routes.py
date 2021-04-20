@@ -1,9 +1,10 @@
 from flask import flash, jsonify, redirect, render_template, request, make_response
 
 from flask import current_app as app
-# from .models import
-# from random import sample
 
+from . import db
+from .models import Movie
+# from random import sample
 
 # Ensure responses aren't cached
 @app.after_request
@@ -15,8 +16,25 @@ def after_request(response):
 
 
 @app.route('/', methods=['GET', 'POST'])
-def index():
-    return render_template("home.html")
+def home():
+    movies = Movie.query.all()
+    return render_template("home.html", title="All Movies", movies=movies)
+
+
+@app.route('/movie/<int:movie_id>', methods=['GET', 'POST'])
+def movie_detail(movie_id):
+    movie = Movie.query.filter_by(id=movie_id).first()
+
+    return render_template('movie_detail.html', movie=movie)
+
+
+    # movie = Movie(
+    #     title='Title',
+    #     age='18+'
+    # )
+    # db.session.add(movie)
+    # db.session.commit()
+
 
 
 # @app.route('/add_project', methods=["GET", "POST"])

@@ -2,32 +2,32 @@ from app import db
 
 
 genre_identifier = db.Table('genre_identifier',
-    db.Column('movie_id', db.Integer, db.ForeignKey('movie.movie_id')),
-    db.Column('genre_id', db.Integer, db.ForeignKey('genre.genre_id'))
+    db.Column('movie_id', db.Integer, db.ForeignKey('movie.id')),
+    db.Column('genre_id', db.Integer, db.ForeignKey('genre.id'))
 )
 genre_people_identifier = db.Table('genre_people_identifier',
-    db.Column('people_id', db.Integer, db.ForeignKey('people.people_id')),
-    db.Column('genre_id', db.Integer, db.ForeignKey('genre.genre_id'))
+    db.Column('people_id', db.Integer, db.ForeignKey('people.id')),
+    db.Column('genre_id', db.Integer, db.ForeignKey('genre.id'))
 )
 country_identifier = db.Table('country_identifier',
-    db.Column('movie_id', db.Integer, db.ForeignKey('movie.movie_id')),
-    db.Column('country_id', db.Integer, db.ForeignKey('country.country_id'))
+    db.Column('movie_id', db.Integer, db.ForeignKey('movie.id')),
+    db.Column('country_id', db.Integer, db.ForeignKey('country.id'))
 )
 director_identifier = db.Table('director_identifier',
-    db.Column('movie_id', db.Integer, db.ForeignKey('movie.movie_id')),
-    db.Column('director_id', db.Integer, db.ForeignKey('people.director_id'))
+    db.Column('movie_id', db.Integer, db.ForeignKey('movie.id')),
+    db.Column('director_id', db.Integer, db.ForeignKey('people.id'))
 )
 producer_identifier = db.Table('producer_identifier',
-    db.Column('movie_id', db.Integer, db.ForeignKey('movie.movie_id')),
-    db.Column('producer_id', db.Integer, db.ForeignKey('people.producer_id'))
+    db.Column('movie_id', db.Integer, db.ForeignKey('movie.id')),
+    db.Column('producer_id', db.Integer, db.ForeignKey('people.id'))
 )
 writer_identifier = db.Table('writer_identifier',
-    db.Column('movie_id', db.Integer, db.ForeignKey('movie.movie_id')),
-    db.Column('writer_id', db.Integer, db.ForeignKey('people.writer_id'))
+    db.Column('movie_id', db.Integer, db.ForeignKey('movie.id')),
+    db.Column('writer_id', db.Integer, db.ForeignKey('people.id'))
 )
 artist_identifier = db.Table('artist_identifier',
-    db.Column('movie_id', db.Integer, db.ForeignKey('movie.movie_id')),
-    db.Column('artist_id', db.Integer, db.ForeignKey('people.artist_id'))
+    db.Column('movie_id', db.Integer, db.ForeignKey('movie.id')),
+    db.Column('artist_id', db.Integer, db.ForeignKey('people.id'))
 )
 
 
@@ -53,7 +53,7 @@ class People(db.Model):
     avatar = db.Column(db.String(30), nullable=False, default='default_avatar.jpg')
     date_of_birth = db.Column(db.Date)
     place_of_birth = db.Column(db.String())
-    genres = db.relationship(Genre, backref='genres', lazy=True, secondary=genre_people_identifier)
+    genres = db.relationship(Genre, backref='genre', lazy=True, secondary=genre_people_identifier)
     total_movies = db.Column(db.String(10))
 
     def __init__(self, full_name, date_of_birth, place_of_birth, genres, total_movies):
@@ -76,7 +76,7 @@ class Movie(db.Model):
     avatar = db.Column(db.String(30), nullable=False, default='default_avatar.jpg')
     photos = db.relationship('Photo', backref='photos', lazy=True, uselist=True)
     countries = db.relationship(Country, backref='countries', lazy=True, secondary=country_identifier)
-    genres = db.relationship(Genre, backref='genres', lazy=True, secondary=genre_identifier)
+    genres = db.relationship(Genre, backref=db.backref('genres'), lazy=True, secondary=genre_identifier)
     directors = db.relationship(People, backref='directors', lazy=True, secondary=director_identifier)
     producers = db.relationship(People, backref='producers', lazy=True, secondary=producer_identifier)
     writers = db.relationship(People, backref='writers', lazy=True, secondary=writer_identifier)
@@ -89,6 +89,17 @@ class Movie(db.Model):
     original_lang = db.Column(db.String(50))
     production_companies = db.Column(db.String())
 
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'title': self.title,
+            'description': self.description,
+            'year': self.year,
+            'age': self.age,
+            'budget': self.budget,
+            'rating': self.rating,
+            'runtime': self.runtime,
+        }
 
 class Photo(db.Model):
     __tablename__ = 'photo'
