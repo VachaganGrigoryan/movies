@@ -66,7 +66,7 @@ class LookUpIMDB:
                     url,
                     headers={
                         'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.72 Safari/537.36'},
-                    # proxies={"http": self.proxy, "https": self.proxy}
+                    proxies={"http": self.proxy, "https": self.proxy}
                 )
             except:
                 logging.info(f"Connection error: Skipping... {self.proxy} IP.")
@@ -142,17 +142,17 @@ class IMDBScraper:
 
 
 if __name__ == '__main__':
-    # service = LookUpIMDB(BASE_URL)
-    #
-    # for category in service.look_up_category():
-    #     for film in category.get('films'):
-    #         print(film)
+    service = LookUpIMDB(BASE_URL)
+
+    for category in service.look_up_category():
+        for film in category.get('films'):
+            print(film)
 
     # print(json.dumps(service.film_lists, indent=True))
 
     # print(json.dumps(service.movies, indent=True))
 
-    scraper = IMDBScraper()
-    # # # html = ''
-    with open(Path('./html/imdb/films/The Shawshank Redemption.html'), mode='r') as html:
-        print(json.dumps(scraper.get_film(html.read()), indent=4, ensure_ascii=False))
+    # scraper = IMDBScraper()
+    # # # # html = ''
+    # with open(Path('./html/imdb/films/The Shawshank Redemption.html'), mode='r') as html:
+    #     print(json.dumps(scraper.get_film(html.read()), indent=4, ensure_ascii=False))

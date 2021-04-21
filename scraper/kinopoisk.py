@@ -48,7 +48,6 @@ class LookUpKinoPoisk:
                 Path(self.local_path).mkdir(parents=True, exist_ok=True)
                 with open(Path(f'{self.local_path}/{local}.html'), mode='wb') as html:
                     html.write(response.content)
-                break
 
             return response.text
 
