@@ -73,7 +73,9 @@ class Movie(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(250), nullable=False)
     description = db.Column(db.String())
-    avatar = db.Column(db.String(30), nullable=False, default='default_avatar.jpg')
+    avatar = db.Column(db.String(250), nullable=False, default='default_avatar.jpg')
+    banner = db.Column(db.String(250), nullable=True, default='default_banner.jpg')
+    trailer = db.Column(db.String(250), nullable=True)
     photos = db.relationship('Photo', backref='photos', lazy=True, uselist=True)
     countries = db.relationship(Country, backref='countries', lazy=True, secondary=country_identifier)
     genres = db.relationship(Genre, backref=db.backref('genres'), lazy=True, secondary=genre_identifier)
@@ -81,7 +83,7 @@ class Movie(db.Model):
     producers = db.relationship(People, backref='producers', lazy=True, secondary=producer_identifier)
     writers = db.relationship(People, backref='writers', lazy=True, secondary=writer_identifier)
     artists = db.relationship(People, backref='artists', lazy=True, secondary=artist_identifier)
-    year = db.Column(db.Date)
+    year = db.Column(db.String())
     age = db.Column(db.String())
     budget = db.Column(db.String())
     rating = db.Column(db.String())
@@ -90,16 +92,7 @@ class Movie(db.Model):
     production_companies = db.Column(db.String())
 
     def to_dict(self):
-        return {
-            'id': self.id,
-            'title': self.title,
-            'description': self.description,
-            'year': self.year,
-            'age': self.age,
-            'budget': self.budget,
-            'rating': self.rating,
-            'runtime': self.runtime,
-        }
+        return self.__dict__
 
 class Photo(db.Model):
     __tablename__ = 'photo'

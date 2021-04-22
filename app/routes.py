@@ -3,6 +3,7 @@ from flask import flash, jsonify, redirect, render_template, request, make_respo
 from flask import current_app as app
 
 from . import db
+from .forms import MovieSearchForm
 from .models import Movie
 # from random import sample
 
@@ -16,16 +17,26 @@ def after_request(response):
 
 
 @app.route('/', methods=['GET', 'POST'])
-def home():
+def index():
+    # search_form = MovieSearchForm(request.form)
+    # if request.method == 'POST':
+    #     return search(search_form)
+
     movies = Movie.query.all()
-    return render_template("home.html", title="All Movies", movies=movies)
+    return render_template("index.html", title="All Movies", movies=movies)
 
 
-@app.route('/movie/<int:movie_id>', methods=['GET', 'POST'])
-def movie_detail(movie_id):
+@app.route('/movies', methods=['GET', 'POST'])
+def movies():
+    movies = Movie.query.all()
+    return render_template("movie-category.html", title="All Movies", movies=movies)
+
+
+@app.route('/movies/<int:movie_id>', methods=['GET', 'POST'])
+def movies_detail(movie_id):
     movie = Movie.query.filter_by(id=movie_id).first()
 
-    return render_template('movie_detail.html', movie=movie)
+    return render_template('movie-details.html', movie=movie)
 
 
     # movie = Movie(
@@ -34,6 +45,13 @@ def movie_detail(movie_id):
     # )
     # db.session.add(movie)
     # db.session.commit()
+
+# @app.route('/search')
+# def search(search_form):
+#
+#     print(search_form.search)
+#
+#     return redirect('movies')
 
 
 
