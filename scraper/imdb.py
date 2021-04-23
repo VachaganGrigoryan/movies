@@ -46,7 +46,10 @@ class LookUpIMDB:
             for film in self.scraper.get_films(self._fetch_(url, local_path)):
                 film_url = f'{self.base_url}{film["url"]}'
                 film_local_path = f"films/{film['title']}"
-                yield self.scraper.get_film(self._fetch_(film_url, film_local_path))
+                yield {
+                    **film,
+                    **self.scraper.get_film(self._fetch_(film_url, film_local_path))
+                }
 
         Path(f"{self.local_path}/category").mkdir(parents=True, exist_ok=True)
         for category in self.film_lists:
@@ -108,37 +111,37 @@ class IMDBScraper:
             poster_td = tr.find('td', {'class': 'posterColumn'})
             title_td = tr.find('td', {'class': 'titleColumn'})
             rating_td = tr.find('td', {'class': 'ratingColumn'})
-
+            url = title_td.a.get('href').split('/?')[0]
+            imdb_id = url.replace('/title/', '')
             yield {
                 'title': title_td.a.get_text(),
-                'url': title_td.a.get('href'),
+                'url': url,
+                'imdb_id': imdb_id
                 # 'year': title_td.span.get_text(),
                 # 'rating': rating_td.get_text().strip()
             }
 
     def get_film(self, html: str):
         bs = BeautifulSoup(html, features="lxml")
-        title_block = bs.find('div', {'id': 'title-overview-widget'}).find('div', {'class': 'title_block'})
+        overview_widget = bs.find('div', {'id': 'title-overview-widget'})
 
+        title_block = overview_widget.find('div', {'class': 'title_block'})
         h1 = title_block.find('h1')
         subtext = title_block.find('div', {'class': 'subtext'})
         a = subtext.find_all('a')
         ratingValue = title_block.find('div', {'class': 'ratingValue'})
 
+        slate_wrapper = overview_widget.find('div', {'class': 'slate_wrapper'})
+        img = slate_wrapper.find('img').get('src')
+
         return {
             'title': h1.get_text().strip(),
             'runtime': subtext.time.get_text().strip(),
-            'genres': a[0].get_text().strip(),
-            'year': a[1].get_text().strip(),  # h1.span.a.get_text(),
-            'rating': ratingValue.strong.get('title')
+            'genres': [link.get_text().strip() for link in a[:-1]],
+            'year': a[-1].get_text().strip(),  # h1.span.a.get_text(),
+            'rating': ratingValue.strong.get('title'),
+            'avatar': img.split('._V1_')[0],
         }
-
-        # return {
-        #     'title': title_td.a.get_text(),
-        #     'url': title_td.a.get('href'),
-        #     # 'year': title_td.span.get_text(),
-        #     # 'rating': rating_td.get_text().strip()
-        # }
 
 
 if __name__ == '__main__':

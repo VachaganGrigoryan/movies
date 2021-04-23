@@ -3,7 +3,7 @@ from flask import flash, jsonify, redirect, render_template, request, make_respo
 from flask import current_app as app
 
 from . import db
-from .forms import MovieSearchForm
+# from .forms import MovieSearchForm
 from .models import Movie
 # from random import sample
 

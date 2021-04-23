@@ -71,6 +71,8 @@ class Movie(db.Model):
     __tablename__ = 'movie'
 
     id = db.Column(db.Integer, primary_key=True)
+    imdb_id = db.Column(db.String(), unique=True)
+    imdb_url = db.Column(db.String(), unique=True)
     title = db.Column(db.String(250), nullable=False)
     description = db.Column(db.String())
     avatar = db.Column(db.String(250), nullable=False, default='default_avatar.jpg')
