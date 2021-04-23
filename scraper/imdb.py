@@ -6,7 +6,7 @@ import requests
 from pathlib import Path
 from bs4 import BeautifulSoup
 
-from proxy import proxies
+from scraper.proxy import proxies
 
 logging.basicConfig(format="Datetime :: %(asctime)s %(message)s", level=logging.INFO)
 
@@ -16,49 +16,31 @@ proxy_pool = cycle(proxies)
 
 class LookUpIMDB:
 
-    def __init__(self, url: str, local_path: str = './html/imdb'):
+    def __init__(self, url: str, local_path: str = './scraper/html/imdb'):
         self.base_url = url
         self.local_path = local_path
         self.proxy = next(proxy_pool)
-        self.scraper = IMDBScraper()
-        # self.categories = [
-        #     {'title': 'Top Box Office (US)', 'link': 'chart/boxoffice/'},
-        #     {'title': 'Most Popular Movies', 'link': 'chart/moviemeter'},
-        #     {'title': 'Top Rated Movies', 'link': 'chart/top'},
-        #     {'title': 'Top Rated English Movies', 'link': 'chart/top-english-movies'},
-        #     {'title': 'Most Popular TV Shows', 'link': 'chart/tvmeter'},
-        #     {'title': 'Top Rated TV Shows', 'link': 'chart/toptv'},
-        #     {'title': 'Top Rated Indian Movies', 'link': 'india/top-rated-indian-movies'},
-        #     {'title': 'Lowest Rated Movies', 'link': 'chart/bottom'},
-        # ]
-        self.film_lists = self.scraper.get_film_lists(self._fetch_(self.base_url, 'film-lists'))
 
-        # self.movies = ({
-        #     **category,
-        #     'films': self.scraper.get_films(
-        #         self._fetch_(f'{self.base_url}{category["link"]}', category['link'].split('?')[0].replace('/', '--'))
-        #     )
-        # } for category in self.film_lists)
+        # self.film_lists = self.scrap_film_lists(self._fetch_(self.base_url, 'film-lists'))
 
     def look_up_category(self):
-        def look_up_films(url, local_path):
-            Path(f"{self.local_path}/films").mkdir(parents=True, exist_ok=True)
-            for film in self.scraper.get_films(self._fetch_(url, local_path)):
-                film_url = f'{self.base_url}{film["url"]}'
-                film_local_path = f"films/{film['title']}"
-                yield {
-                    **film,
-                    **self.scraper.get_film(self._fetch_(film_url, film_local_path))
-                }
-
         Path(f"{self.local_path}/category").mkdir(parents=True, exist_ok=True)
-        for category in self.film_lists:
-            url = f'{self.base_url}{category["link"]}'
-            local_path = f"category/{category['link'].split('?')[0].replace('/', '--')}"
-            yield {
-                **category,
-                'films': look_up_films(url, local_path)
-            }
+        for category in self.scrap_category(self._fetch_(self.base_url, 'film-lists')):
+            yield category
+
+    def look_up_films(self, url, local_path):
+        Path(f"{self.local_path}/films").mkdir(parents=True, exist_ok=True)
+        for film in self.scrap_films(self._fetch_(f'{self.base_url}{url}', local_path)):
+            yield film
+
+    # def look_up_video(self, url):
+    #     Path(f"{self.local_path}/videos").mkdir(parents=True, exist_ok=True)
+    #     video_local = f"videos/{url.split('?')[0].replace('/video/imdb/', '')}"
+    #     return self._fetch_(f'{self.base_url}{url}', video_local)
+
+    def look_up_people(self, url, local_path):
+        Path(f"{self.local_path}/people").mkdir(parents=True, exist_ok=True)
+        return self.scrap_people(self._fetch_(f'{self.base_url}{url}', local_path))
 
     def _fetch_(self, url: str, local: str = ''):
         logging.info(f'Request: {url}')
@@ -88,40 +70,36 @@ class LookUpIMDB:
 
             return response.text
 
-
-class IMDBScraper:
-
-    def __init__(self):
-        pass
-
-    def get_film_lists(self, html: str):
-        # print(html)
+    def scrap_category(self, html: str):
         bs = BeautifulSoup(html, features="lxml")
-        # print([link.get('href') for link in bs.find_all('a', {'class': "ipc-list__item"})])
         for link in bs.select_one('span>div>div>ul').find_all('a', {'class': "ipc-list__item"}):
             if '/chart/' in link.get('href'):
+                imdb_url = link.get('href')
                 yield {
                     'title': link.text.strip(),
-                    'link': link.get('href')
+                    'imdb_url': imdb_url,
+                    'films': self.look_up_films(imdb_url, f"category/{imdb_url.split('?')[0].replace('/', '__')}")
                 }
 
-    def get_films(self, html: str):
+    def scrap_films(self, html: str):
         bs = BeautifulSoup(html, features="lxml")
         for tr in bs.find('tbody').find_all('tr'):  # , {'class': 'lister-list'}
             poster_td = tr.find('td', {'class': 'posterColumn'})
             title_td = tr.find('td', {'class': 'titleColumn'})
             rating_td = tr.find('td', {'class': 'ratingColumn'})
-            url = title_td.a.get('href').split('/?')[0]
-            imdb_id = url.replace('/title/', '')
+            imdb_url = title_td.a.get('href').split('/?')[0]
+            imdb_id = imdb_url.replace('/title/', '')
+            img = poster_td.find('img').get('src')
+
             yield {
                 'title': title_td.a.get_text(),
-                'url': url,
-                'imdb_id': imdb_id
-                # 'year': title_td.span.get_text(),
-                # 'rating': rating_td.get_text().strip()
+                'imdb_url': imdb_url,
+                'imdb_id': imdb_id,
+                'avatar': f'{img.split("._V1_")[0]}._V1_FMjpg_UX1000_.jpg',
+                **self.scrap_film(self._fetch_(f'{self.base_url}{imdb_url}', f"films/{imdb_id}"))
             }
 
-    def get_film(self, html: str):
+    def scrap_film(self, html: str):
         bs = BeautifulSoup(html, features="lxml")
         overview_widget = bs.find('div', {'id': 'title-overview-widget'})
 
@@ -132,7 +110,36 @@ class IMDBScraper:
         ratingValue = title_block.find('div', {'class': 'ratingValue'})
 
         slate_wrapper = overview_widget.find('div', {'class': 'slate_wrapper'})
-        img = slate_wrapper.find('img').get('src')
+        video_imdb_url = slate_wrapper.find('div', {'class': 'slate'}).a.get('href')
+
+        # video_html = self.look_up_video(video_imdb_url)
+        # bs_video = BeautifulSoup(video_html, features='lxml')
+        #
+        # video = bs_video.find('video', {'class': 'jw-video'}).get('src')
+
+        plot_summary = overview_widget.find('div', {'class': 'plot_summary'})
+
+        people = plot_summary.find_all('div', {'class': 'credit_summary_item'})
+
+        def get_people(bs):
+            for link in bs.find_all('a'):
+                if 'name' in link.get('href'):
+                    imdb_url = link.get('href').split('/?')[0]
+                    imdb_id = imdb_url.replace('/name/', '')
+                    yield {
+                        'imdb_url': imdb_url,
+                        'imdb_id': imdb_id,
+                        'full_name': link.get_text(),
+                        '_func': lambda: self.look_up_people(imdb_url, f'people/{imdb_id}')
+                    }
+        details = {}
+        for div in bs.find('div', {'id': 'titleDetails'}).find_all('div', {'class': 'txt-block'}):
+            detail = div.get_text()
+            if ':' in detail:
+                key, value = detail.split(':', 1)
+                details[key.strip()] = value.strip()
+
+        images = bs.find('div', {'id': 'titleImageStrip'})
 
         return {
             'title': h1.get_text().strip(),
@@ -140,16 +147,42 @@ class IMDBScraper:
             'genres': [link.get_text().strip() for link in a[:-1]],
             'year': a[-1].get_text().strip(),  # h1.span.a.get_text(),
             'rating': ratingValue.strong.get('title'),
-            'avatar': img.split('._V1_')[0],
+            'description': plot_summary.find('div', {'class': 'summary_text'}).get_text().strip(),
+            'directors': list(get_people(people[0])),
+            'writers': list(get_people(people[1])),
+            'artists': list(get_people(people[2])),
+            # 'trailer': video,
+            'photos': [f'{img.get("src").split("._V1_")[0]}._V1_FMjpg_UX1000_.jpg' for img in images.find_all('img')],
+            'countries': details.get('Country', '').split('|'),
+            'original_lang': details.get('Language'),
+            'production_co': details.get('Production Co', '').replace('\nSee more\xa0»', ''),
+        }
+
+    def scrap_people(self, html: str):
+        bs = BeautifulSoup(html, features="lxml")
+
+        overview_widget = bs.find('div', {'class': 'name-overview-widget'})
+        tbody = overview_widget.find('table', {'id': 'name-overview-widget-layout'}).find_all('tr')
+
+        full_name = tbody[0].find('h1').get_text()
+        infobar = tbody[0].find('div', {'class': 'infobar'}).find_all('a')
+        avatar = tbody[1].find('img', {'id': 'name-poster'}).get('src')
+        bio = tbody[2].find_all('div') or []
+
+        return {
+            'full_name': full_name,
+            'job_categories': [link.get_text().strip() for link in infobar],
+            'avatar': f'{avatar.split("._V1_")[0]}._V1_FMjpg_UX1000_.jpg',
+            'bio': ''.join(map(str, bio)),
         }
 
 
 if __name__ == '__main__':
-    service = LookUpIMDB(BASE_URL)
+    service = LookUpIMDB(BASE_URL, local_path='./html/imdb')
 
     for category in service.look_up_category():
         for film in category.get('films'):
-            print(film)
+            print(json.dumps(film, indent=4, ensure_ascii=False))
 
     # print(json.dumps(service.film_lists, indent=True))
 
@@ -157,5 +190,6 @@ if __name__ == '__main__':
 
     # scraper = IMDBScraper()
     # # # # html = ''
-    # with open(Path('./html/imdb/films/The Shawshank Redemption.html'), mode='r') as html:
-    #     print(json.dumps(scraper.get_film(html.read()), indent=4, ensure_ascii=False))
+    # with open(Path('./html/imdb/people/nm0001104.html'), mode='r') as html:
+    #     print(json.dumps(service.scrap_people(html.read()), indent=4, ensure_ascii=False))
+

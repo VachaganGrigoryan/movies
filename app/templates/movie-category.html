@@ -91,7 +91,7 @@
                            <a href="{{ url_for('movies_detail', movie_id=movie.id) }}">
                               <div class="block-images position-relative">
                                  <div class="img-box">
-                                    <img src="{{ url_for('static', filename='images/upcoming/03.jpg') }}" class="img-fluid" alt="">
+                                    <img src="{{ movie.avatar }}" class="img-fluid" alt="">
                                  </div>
                                  <div class="block-description">
                                     <h6>{{ movie.title }}</h6>
