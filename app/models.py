@@ -38,7 +38,7 @@ class Country(db.Model):
     name = db.Column(db.String(120), nullable=False)
 
     def __repr__(self):
-        return f'JobCategories({self.id}, {self.name})'
+        return f"Country('{self.name}')"
 
     def __str__(self):
         return self.name
@@ -51,7 +51,7 @@ class JobCategories(db.Model):
     name = db.Column(db.String(120), nullable=False)
 
     def __repr__(self):
-        return f'JobCategories({self.id}, {self.name})'
+        return f"JobCategories('{self.name}')"
 
     def __str__(self):
         return self.name
@@ -64,7 +64,7 @@ class Genre(db.Model):
     name = db.Column(db.String(120), nullable=False)
 
     def __repr__(self):
-        return f'Genre({self.id}, {self.name})'
+        return f"Genre('{self.name}')"
 
     def __str__(self):
         return self.name
@@ -76,19 +76,21 @@ class People(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     imdb_id = db.Column(db.String(), unique=True)
     imdb_url = db.Column(db.String(), unique=True)
-    full_name = db.Column(db.String(120), nullable=False)
+    full_name = db.Column(db.String(), nullable=False)
     bio = db.Column(db.Text(convert_unicode=True), nullable=False)
-    avatar = db.Column(db.String(), nullable=False, default='default_avatar.jpg')
+    avatar = db.Column(db.String(), nullable=False, default='default_avatar.png')
     job_categories = db.relationship(JobCategories, backref='job', lazy=True, secondary=job_identifier)
-    total_movies = db.Column(db.String())
+    born_info = db.Column(db.String())
+    death_info = db.Column(db.String())
 
-    def __init__(self, imdb_id, imdb_url, full_name, bio, avatar, total_movies):
+    def __init__(self, imdb_id, imdb_url, full_name, bio, avatar, born_info, death_info):
         self.imdb_id = imdb_id
         self.imdb_url = imdb_url
         self.full_name = full_name
         self.bio = bio
         self.avatar = avatar
-        self.total_movies = total_movies
+        self.born_info = born_info
+        self.death_info = death_info
 
     def __repr__(self):
         return f"<People ('{self.full_name}')>"
@@ -100,8 +102,8 @@ class Movie(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     imdb_id = db.Column(db.String(), unique=True)
     imdb_url = db.Column(db.String(), unique=True)
-    title = db.Column(db.String(500), nullable=False)
-    description = db.Column(db.String())
+    title = db.Column(db.String(), nullable=False)
+    description = db.Column(db.Text())
     avatar = db.Column(db.String(), nullable=False, default='default_avatar.jpg')
     banner = db.Column(db.String(), nullable=True, default='default_banner.jpg')
     trailer = db.Column(db.String(), nullable=True)
@@ -117,11 +119,15 @@ class Movie(db.Model):
     budget = db.Column(db.String())
     rating = db.Column(db.String())
     runtime = db.Column(db.String())
-    original_lang = db.Column(db.String(50))
+    original_lang = db.Column(db.String())
     production_co = db.Column(db.String())
 
     def to_dict(self):
         return self.__dict__
+
+    def __repr__(self):
+        return f"<Movie ('{self.title}')>"
+
 
 class Photo(db.Model):
     __tablename__ = 'photo'
@@ -129,3 +135,6 @@ class Photo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     image = db.Column(db.String(), nullable=False)
     movie_id = db.Column(db.Integer, db.ForeignKey('movie.id'))
+
+    def __repr__(self):
+        return f"<Photo ('{self.image}')>"

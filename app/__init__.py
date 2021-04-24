@@ -9,6 +9,7 @@ db = SQLAlchemy()
 def create_app(config: str):
     """Construct the core application."""
     app = Flask(__name__, instance_relative_config=False)
+    # app.register_error_handler(404, page_not_found)
     if config is not None:
         app.config.from_object(config)
         # app.config.from_pyfile(config)

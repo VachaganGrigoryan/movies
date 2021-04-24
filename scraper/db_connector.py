@@ -1,63 +1,50 @@
 from flask_sqlalchemy import SQLAlchemy
 from app.models import Movie, People, Genre, JobCategories, Country, Photo
-
-# from sqlalchemy import create_engine
-# from sqlalchemy.orm import sessionmaker, Session, declarative_base
-
-# engine = create_engine('postgresql://movies:in!Tpa5s@localhost:5432/movies', echo=True)
-# db = declarative_base()
+from scraper.datamodel import MovieData, PeopleData
+from typing import List
 
 
-def create_movie(db: SQLAlchemy, data: dict):
-    movie = Movie.query.filter_by(imdb_id=data['imdb_id']).first()
+def create_movie(db: SQLAlchemy, data: MovieData):
+    movie = Movie.query.filter_by(imdb_id=data.imdb_id).first()
     if movie is None:
+        data.look_up()
         movie = Movie(
-            imdb_id=data.get('imdb_id', ''),
-            imdb_url=data.get('imdb_url', ''),
-            title=data.get('title', ''),
-            description=data.get('description', ''),
-            avatar=data.get('avatar', ''),
-            banner=data.get('banner', ''),
-            trailer=data.get('trailer', ''),
-            year=data.get('year', ''),
-            age=data.get('age', ''),
-            budget=data.get('budget', ''),
-            rating=data.get('rating', ''),
-            runtime=data.get('runtime', ''),
-            original_lang=data.get('original_lang', ''),
-            production_co=data.get('production_co', '')
+            imdb_id=data.imdb_id,
+            imdb_url=data.imdb_url,
+            title=data.title,
+            avatar=data.avatar,
+            description=data.description,
+            banner=data.banner,
+            trailer=data.trailer,
+            year=data.year,
+            age=data.age,
+            budget=data.budget,
+            rating=data.rating,
+            runtime=data.runtime,
+            original_lang=data.original_lang,
+            production_co=data.production_co
         )
     else:
-        movie.imdb_url = data.get('imdb_url', movie.imdb_url)
-        movie.title = data.get('title', movie.title)
-        movie.description = data.get('description', movie.description)
-        movie.avatar = data.get('avatar', movie.avatar)
-        movie.banner = data.get('banner', movie.banner)
-        movie.trailer = data.get('trailer', movie.trailer)
-        movie.year = data.get('year', movie.year)
-        movie.age = data.get('age', movie.age)
-        movie.budget = data.get('budget', movie.budget)
-        movie.rating = data.get('rating', movie.rating)
-        movie.runtime = data.get('runtime', movie.runtime)
-        movie.original_lang = data.get('original_lang', movie.original_lang)
-        movie.production_co = data.get('production_co', movie.production_co)
+        movie.imdb_url = data.imdb_url
+        movie.title = data.title
+        movie.avatar = data.avatar
 
-    for genre in create_genre(db, data.get('genres', [])):
+    for genre in create_genre(db, data.genres):
         movie.genres.append(genre)
 
-    for director in create_people(db, data.get('directors', [])):
+    for director in create_people(db, data.directors):
         movie.directors.append(director)
 
-    for writer in create_people(db, data.get('writers', [])):
+    for writer in create_people(db, data.writers):
         movie.writers.append(writer)
 
-    for artist in create_people(db, data.get('artists', [])):
+    for artist in create_people(db, data.artists):
         movie.artists.append(artist)
 
-    for country in create_country(db, data.get('countries', [])):
+    for country in create_country(db, data.countries):
         movie.countries.append(country)
 
-    for photo in create_photo(db, data.get('photos', [])):
+    for photo in create_photo(db, data.photos):
         movie.photos.append(photo)
 
     print(movie.to_dict())
@@ -76,29 +63,26 @@ def create_genre(db: SQLAlchemy, data: list):
         yield genre
 
 
-def create_people(db: SQLAlchemy, data: list):
+def create_people(db: SQLAlchemy, data: List[PeopleData]):
     for item in data:
-        people = People.query.filter_by(imdb_id=item['imdb_id']).first()
+        people = People.query.filter_by(imdb_id=item.imdb_id).first()
 
         if people is None:
-            new_item = item.get('_func')()
-            item['job_categories'] = new_item.get('job_categories', [])
+            item.look_up()
             people = People(
-                imdb_id=item.get('imdb_id', ''),
-                imdb_url=item.get('imdb_url', ''),
-                full_name=new_item.get('full_name', ''),
-                bio=new_item.get('bio', ''),
-                avatar=new_item.get('avatar', ''),
-                total_movies=new_item.get('total_movies', ''),
+                imdb_id=item.imdb_id,
+                imdb_url=item.imdb_url,
+                full_name=item.full_name,
+                bio=item.bio,
+                avatar=item.avatar,
+                born_info=item.born_info,
+                death_info=item.death_info
             )
         else:
-            people.imdb_url = item.get('imdb_url', people.imdb_url)
-            people.full_name = item.get('full_name', people.full_name)
-            people.bio = item.get('bio', people.bio)
-            people.avatar = item.get('avatar', people.avatar)
-            people.total_movies = item.get('total_movies', people.total_movies)
+            people.imdb_url = item.imdb_url
+            people.full_name = item.full_name
 
-        for job in create_job_categories(db, item.get('job_categories', [])):
+        for job in create_job_categories(db, item.job_categories):
             people.job_categories.append(job)
 
         db.session.add(people)
@@ -137,10 +121,3 @@ def create_photo(db: SQLAlchemy, data: list):
             db.session.add(photo)
 
         yield photo
-
-
-if __name__ == '__main__':
-    pass
-    # session = sessionmaker(engine)()
-
-    # session.commit()

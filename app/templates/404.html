@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Page Not Found{% endblock %}
+{% block content %}
+
+    <section class="sign-in-page">
+        <div class="container">
+            <div class="row justify-content-center align-items-center height-self-center">
+                <div class="col-lg-5 col-md-12 align-self-center justify-content-center">
+                    <h1>Page Not Found (404)</h1>
+                    <p>What you were looking for is just not there.<a href="{{ url_for('index') }}"
+                                                                      class="text-primary"> Film Guide</a></p>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

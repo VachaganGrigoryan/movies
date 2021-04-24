@@ -1,10 +1,13 @@
 from flask import flash, jsonify, redirect, render_template, request, make_response
 
 from flask import current_app as app
+from sqlalchemy import or_
 
 from . import db
 # from .forms import MovieSearchForm
-from .models import Movie
+from .models import Movie, People, Genre
+
+
 # from random import sample
 
 # Ensure responses aren't cached
@@ -14,6 +17,11 @@ def after_request(response):
     response.headers["Expires"] = 0
     response.headers["Pragma"] = "no-cache"
     return response
+
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -34,9 +42,27 @@ def movies():
 
 @app.route('/movies/<int:movie_id>', methods=['GET', 'POST'])
 def movies_detail(movie_id):
-    movie = Movie.query.filter_by(id=movie_id).first()
+    movie = Movie.query.filter_by(id=movie_id).first_or_404()
+    movies = Movie.query.filter(Movie.genres.any(Genre.id.in_(g.id for g in movie.genres)), Movie.id != movie.id).all()
 
-    return render_template('movie-details.html', movie=movie)
+    return render_template('movie-details.html', movie=movie, movies=movies)
+
+
+@app.route('/people/<int:people_id>', methods=['GET', 'POST'])
+def people_detail(people_id):
+    people = People.query.filter_by(id=people_id).first_or_404()
+    directed_or_wrote_movies = Movie.query.filter(db.or_(
+        Movie.directors.any(People.id == people.id),
+        Movie.writers.any(People.id == people.id)
+    )).all()
+    acted_movies = Movie.query.filter(Movie.artists.any(People.id == people.id)).all()
+    movies = {
+        'directed_or_wrote_movies': directed_or_wrote_movies,
+        'acted': acted_movies,
+    }
+    return render_template('people-details.html', people=people, movies=movies)
+
+
 
 
     # movie = Movie(
@@ -52,7 +78,6 @@ def movies_detail(movie_id):
 #     print(search_form.search)
 #
 #     return redirect('movies')
-
 
 
 # @app.route('/add_project', methods=["GET", "POST"])
