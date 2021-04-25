@@ -1,10 +1,8 @@
 import math
 
 from flask import flash, jsonify, redirect, render_template, request, make_response, url_for
-from flask_paginate import Pagination, get_page_args
 
 from flask import current_app as app
-from sqlalchemy import or_
 
 from . import db
 # from .forms import MovieSearchForm
@@ -45,23 +43,10 @@ def movies():
         return redirect(url_for('movies'))
 
     movies = Movie.query.paginate(page, per_page, error_out=False, max_per_page=20)
-
-    # page, per_page, offset = get_page_args(page_parameter='page',
-    #                                        per_page_parameter='per_page')
-    # total = len(movies)
-    #
-    # pagination_movies = movies[offset: offset + per_page]
-    #
-    # pagination = Pagination(page=page, per_page=per_page, total=total, css_framework='bootstrap4',
-    #                         prev_label='❮', next_label='❯')
-    print(movies.pages)
     return render_template(
         "movie-category.html",
         title="All Movies",
         movies=movies,
-        # page = page,
-        # per_page=per_page,
-        # pagination=pagination,
     )
 
 
@@ -88,36 +73,10 @@ def people_detail(people_id):
     return render_template('people-details.html', people=people, movies=movies)
 
 
-    # movie = Movie(
-    #     title='Title',
-    #     age='18+'
-    # )
-    # db.session.add(movie)
-    # db.session.commit()
-
-# @app.route('/search')
-# def search(search_form):
-#
-#     print(search_form.search)
-#
-#     return redirect('movies')
-
-
-# @app.route('/add_project', methods=["GET", "POST"])
-# @login_required
-# def add_project():
-#     form = AddProjectForm()
-#     if form.validate_on_submit():
-#         if form.header_image.data:
-#             header_image = save_picture(form.header_image.data)
-#         project = Project(title=form.title.data, description=form.description.data, header_image=header_image, user_id=current_user.id)
-#         if form.project_images.data:
-#             for image in form.project_images.data:
-#                 image = save_picture(image)
-#                 project.project_images.append(ImageSet(image=image))
-#                 time.sleep(2)
-#         db.session.add(project)
-#         db.session.commit()
-#         flash('Project Successfully Added', 'succes')
-#         return render_template('add_project.html', title='Add Project', form=form)
-#     return render_template('add_project.html', title='Add Project', form=form)
+@app.route('/shows', methods=['GET', 'POST'])
+def shows():
+    return render_template(
+        "show-category.html",
+        title="All Movies",
+        movies=movies,
+    )
