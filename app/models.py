@@ -125,6 +125,9 @@ class Movie(db.Model):
     def to_dict(self):
         return self.__dict__
 
+    def get_genres(self):
+        return ', '.join(map(str, self.genres))
+
     def __repr__(self):
         return f"<Movie ('{self.title}')>"
 

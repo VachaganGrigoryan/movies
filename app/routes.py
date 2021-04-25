@@ -1,4 +1,7 @@
-from flask import flash, jsonify, redirect, render_template, request, make_response
+import math
+
+from flask import flash, jsonify, redirect, render_template, request, make_response, url_for
+from flask_paginate import Pagination, get_page_args
 
 from flask import current_app as app
 from sqlalchemy import or_
@@ -36,8 +39,30 @@ def index():
 
 @app.route('/movies', methods=['GET', 'POST'])
 def movies():
-    movies = Movie.query.all()
-    return render_template("movie-category.html", title="All Movies", movies=movies)
+    try:
+        page, per_page = int(request.args.get('page', 1)), int(request.args.get('per_page', 10))
+    except Exception:
+        return redirect(url_for('movies'))
+
+    movies = Movie.query.paginate(page, per_page, error_out=False, max_per_page=20)
+
+    # page, per_page, offset = get_page_args(page_parameter='page',
+    #                                        per_page_parameter='per_page')
+    # total = len(movies)
+    #
+    # pagination_movies = movies[offset: offset + per_page]
+    #
+    # pagination = Pagination(page=page, per_page=per_page, total=total, css_framework='bootstrap4',
+    #                         prev_label='❮', next_label='❯')
+    print(movies.pages)
+    return render_template(
+        "movie-category.html",
+        title="All Movies",
+        movies=movies,
+        # page = page,
+        # per_page=per_page,
+        # pagination=pagination,
+    )
 
 
 @app.route('/movies/<int:movie_id>', methods=['GET', 'POST'])
@@ -61,8 +86,6 @@ def people_detail(people_id):
         'acted': acted_movies,
     }
     return render_template('people-details.html', people=people, movies=movies)
-
-
 
 
     # movie = Movie(

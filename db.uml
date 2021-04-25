@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>DATABASE</ID>
+  <OriginalElement>d4b9933f-eb92-4387-aa12-c17254e827de.TABLE:movies.public.artist_identifier</OriginalElement>
+  <nodes>
+    <node x="1269.25" y="156.0">d4b9933f-eb92-4387-aa12-c17254e827de.TABLE:movies.public.country</node>
+    <node x="1037.25" y="447.0">d4b9933f-eb92-4387-aa12-c17254e827de.TABLE:movies.public.photo</node>
+    <node x="816.25" y="459.5">d4b9933f-eb92-4387-aa12-c17254e827de.TABLE:movies.public.producer_identifier</node>
+    <node x="414.25" y="459.5">d4b9933f-eb92-4387-aa12-c17254e827de.TABLE:movies.public.artist_identifier</node>
+    <node x="41.25" y="459.5">d4b9933f-eb92-4387-aa12-c17254e827de.TABLE:movies.public.job_identifier</node>
+    <node x="871.0" y="0.0">d4b9933f-eb92-4387-aa12-c17254e827de.TABLE:movies.public.movie</node>
+    <node x="218.25" y="459.5">d4b9933f-eb92-4387-aa12-c17254e827de.TABLE:movies.public.writer_identifier</node>
+    <node x="1466.5" y="156.0">d4b9933f-eb92-4387-aa12-c17254e827de.TABLE:movies.public.genre</node>
+    <node x="604.25" y="459.5">d4b9933f-eb92-4387-aa12-c17254e827de.TABLE:movies.public.director_identifier</node>
+    <node x="1417.25" y="459.5">d4b9933f-eb92-4387-aa12-c17254e827de.TABLE:movies.public.genre_identifier</node>
+    <node x="1207.25" y="459.5">d4b9933f-eb92-4387-aa12-c17254e827de.TABLE:movies.public.country_identifier</node>
+    <node x="373.75" y="84.0">d4b9933f-eb92-4387-aa12-c17254e827de.TABLE:movies.public.people</node>
+    <node x="0.0" y="156.0">d4b9933f-eb92-4387-aa12-c17254e827de.TABLE:movies.public.job</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="d4b9933f-eb92-4387-aa12-c17254e827de.TABLE:movies.public.producer_identifier" target="d4b9933f-eb92-4387-aa12-c17254e827de.TABLE:movies.public.people" relationship="REFERENCES">
+      <point x="-50.25" y="-42.0" />
+      <point x="866.5" y="427.0" />
+      <point x="456.75" y="427.0" />
+      <point x="0.0" y="114.5" />
+    </edge>
+    <edge source="d4b9933f-eb92-4387-aa12-c17254e827de.TABLE:movies.public.writer_identifier" target="d4b9933f-eb92-4387-aa12-c17254e827de.TABLE:movies.public.movie" relationship="REFERENCES">
+      <point x="44.0" y="-42.0" />
+      <point x="350.25" y="417.0" />
+      <point x="967.0" y="417.0" />
+      <point x="0.0" y="198.5" />
+    </edge>
+    <edge source="d4b9933f-eb92-4387-aa12-c17254e827de.TABLE:movies.public.country_identifier" target="d4b9933f-eb92-4387-aa12-c17254e827de.TABLE:movies.public.movie" relationship="REFERENCES">
+      <point x="-47.5" y="-42.0" />
+      <point x="1254.75" y="417.0" />
+      <point x="967.0" y="417.0" />
+      <point x="0.0" y="198.5" />
+    </edge>
+    <edge source="d4b9933f-eb92-4387-aa12-c17254e827de.TABLE:movies.public.country_identifier" target="d4b9933f-eb92-4387-aa12-c17254e827de.TABLE:movies.public.country" relationship="REFERENCES">
+      <point x="47.5" y="-42.0" />
+      <point x="0.0" y="42.5" />
+    </edge>
+    <edge source="d4b9933f-eb92-4387-aa12-c17254e827de.TABLE:movies.public.writer_identifier" target="d4b9933f-eb92-4387-aa12-c17254e827de.TABLE:movies.public.people" relationship="REFERENCES">
+      <point x="-44.0" y="-42.0" />
+      <point x="262.25" y="427.0" />
+      <point x="456.75" y="427.0" />
+      <point x="0.0" y="114.5" />
+    </edge>
+    <edge source="d4b9933f-eb92-4387-aa12-c17254e827de.TABLE:movies.public.director_identifier" target="d4b9933f-eb92-4387-aa12-c17254e827de.TABLE:movies.public.movie" relationship="REFERENCES">
+      <point x="48.0" y="-42.0" />
+      <point x="748.25" y="417.0" />
+      <point x="967.0" y="417.0" />
+      <point x="0.0" y="198.5" />
+    </edge>
+    <edge source="d4b9933f-eb92-4387-aa12-c17254e827de.TABLE:movies.public.job_identifier" target="d4b9933f-eb92-4387-aa12-c17254e827de.TABLE:movies.public.job" relationship="REFERENCES">
+      <point x="-39.25" y="-42.0" />
+      <point x="0.0" y="42.5" />
+    </edge>
+    <edge source="d4b9933f-eb92-4387-aa12-c17254e827de.TABLE:movies.public.genre_identifier" target="d4b9933f-eb92-4387-aa12-c17254e827de.TABLE:movies.public.movie" relationship="REFERENCES">
+      <point x="-43.25" y="-42.0" />
+      <point x="1460.5" y="417.0" />
+      <point x="967.0" y="417.0" />
+      <point x="0.0" y="198.5" />
+    </edge>
+    <edge source="d4b9933f-eb92-4387-aa12-c17254e827de.TABLE:movies.public.job_identifier" target="d4b9933f-eb92-4387-aa12-c17254e827de.TABLE:movies.public.people" relationship="REFERENCES">
+      <point x="39.25" y="-42.0" />
+      <point x="159.0" y="427.0" />
+      <point x="456.75" y="427.0" />
+      <point x="0.0" y="114.5" />
+    </edge>
+    <edge source="d4b9933f-eb92-4387-aa12-c17254e827de.TABLE:movies.public.genre_identifier" target="d4b9933f-eb92-4387-aa12-c17254e827de.TABLE:movies.public.genre" relationship="REFERENCES">
+      <point x="43.25" y="-42.0" />
+      <point x="0.0" y="42.5" />
+    </edge>
+    <edge source="d4b9933f-eb92-4387-aa12-c17254e827de.TABLE:movies.public.artist_identifier" target="d4b9933f-eb92-4387-aa12-c17254e827de.TABLE:movies.public.movie" relationship="REFERENCES">
+      <point x="42.5" y="-42.0" />
+      <point x="541.75" y="417.0" />
+      <point x="967.0" y="417.0" />
+      <point x="0.0" y="198.5" />
+    </edge>
+    <edge source="d4b9933f-eb92-4387-aa12-c17254e827de.TABLE:movies.public.producer_identifier" target="d4b9933f-eb92-4387-aa12-c17254e827de.TABLE:movies.public.movie" relationship="REFERENCES">
+      <point x="50.25" y="-42.0" />
+      <point x="0.0" y="198.5" />
+    </edge>
+    <edge source="d4b9933f-eb92-4387-aa12-c17254e827de.TABLE:movies.public.artist_identifier" target="d4b9933f-eb92-4387-aa12-c17254e827de.TABLE:movies.public.people" relationship="REFERENCES">
+      <point x="-42.5" y="-42.0" />
+      <point x="0.0" y="114.5" />
+    </edge>
+    <edge source="d4b9933f-eb92-4387-aa12-c17254e827de.TABLE:movies.public.photo" target="d4b9933f-eb92-4387-aa12-c17254e827de.TABLE:movies.public.movie" relationship="REFERENCES">
+      <point x="0.0" y="-54.5" />
+      <point x="1112.25" y="417.0" />
+      <point x="967.0" y="417.0" />
+      <point x="0.0" y="198.5" />
+    </edge>
+    <edge source="d4b9933f-eb92-4387-aa12-c17254e827de.TABLE:movies.public.director_identifier" target="d4b9933f-eb92-4387-aa12-c17254e827de.TABLE:movies.public.people" relationship="REFERENCES">
+      <point x="-48.0" y="-42.0" />
+      <point x="652.25" y="427.0" />
+      <point x="456.75" y="427.0" />
+      <point x="0.0" y="114.5" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic" zoom="0.9371359223300971" showDependencies="false" x="952.5071225071225" y="278.0" />
+  <SelectedNodes />
+  <Categories>
+    <Category>Columns</Category>
+    <Category>Key columns</Category>
+    <Category>Virtual foreign keys</Category>
+  </Categories>
+</Diagram>
+

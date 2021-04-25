@@ -114,10 +114,7 @@ def create_country(db: SQLAlchemy, data: list):
 
 def create_photo(db: SQLAlchemy, data: list):
     for image in data:
-        photo = Photo.query.filter_by(image=image).first()
-
-        if photo is None:
-            photo = Photo(image=image)
-            db.session.add(photo)
+        photo = Photo(image=image)
+        db.session.add(photo)
 
         yield photo

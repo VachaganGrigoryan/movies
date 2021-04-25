@@ -98,7 +98,8 @@ class LookUpIMDB:
 
         subtext = title_block.find('div', {'class': 'subtext'})
         if subtext:
-            other.runtime = subtext.time.get_text().strip()
+            if subtext.time:
+                other.runtime = subtext.time.get_text().strip()
 
             a = subtext.find_all('a')
             if a:
@@ -106,16 +107,19 @@ class LookUpIMDB:
                 other.year = a[-1].get_text().strip()
 
         rating_value = title_block.find('div', {'class': 'ratingValue'})
-        if rating_value:
+        if rating_value and rating_value.strong:
             other.rating = rating_value.strong.get('title')
 
         plot_summary = overview_widget.find('div', {'class': 'plot_summary'})
         if plot_summary:
             people = plot_summary.find_all('div', {'class': 'credit_summary_item'})
             if people:
-                other.directors = list(self.scrap_peoples(people[0]))
-                other.writers = list(self.scrap_peoples(people[1]))
-                other.artists = list(self.scrap_peoples(people[2]))
+                try:
+                    other.directors = list(self.scrap_peoples(people[0]))
+                    other.writers = list(self.scrap_peoples(people[1]))
+                    other.artists = list(self.scrap_peoples(people[2]))
+                except IndexError:
+                    pass
 
         story_line = bs.find('div', {'id': 'titleStoryLine'})
         if story_line:
@@ -134,7 +138,7 @@ class LookUpIMDB:
 
         img = bs.find('div', {'id': 'titleImageStrip'})
         if img:
-            other.photos = [f'{i.get("src").split("._V1_")[0]}._V1_FMjpg_UX1000_.jpg' for i in img.find_all('img')]
+            other.photos = [f'{i.get("loadlate").split("._V1_")[0]}._V1_FMjpg_UX1000_.jpg' for i in img.find_all('img')]
 
         slate_wrapper = overview_widget.find('div', {'class': 'slate_wrapper'})
         if slate_wrapper:
@@ -165,8 +169,9 @@ class LookUpIMDB:
         if full_name:
             other.full_name = full_name.get_text()
 
-        info_bar = tbody.find('div', {'class': 'infobar'}).find_all('a')
-        other.job_categories = [link.get_text().strip() for link in info_bar]
+        info_bar = tbody.find('div', {'class': 'infobar'})
+        if info_bar:
+            other.job_categories = [link.get_text().strip() for link in info_bar.find_all('a')]
 
         img = tbody.find('img', {'id': 'name-poster'})
         if img:
@@ -213,5 +218,8 @@ if __name__ == '__main__':
 
     # scraper = IMDBScraper()
     # # # # html = ''
-    with open(Path('./html/imdb/videos/vi3102711321.html'), mode='r') as html:
-        print(service.scrap_video(1, html.read()))
+    with open(Path('./html/imdb/films/tt14318430.html'), mode='r') as html:
+        movie = MovieData("", "", "", "")
+        service.scrap_film(movie, html.read())
+        print(movie)
+
