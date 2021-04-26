@@ -4,12 +4,13 @@
     {{ title }}
 {% endblock %}
 
+{% block slider %}
    <section class="iq-main-slider p-0">
       <div id="tvshows-slider">
          <div>
             <a href="show-details.html">
                <div class="shows-img">
-                  <img src="images/shows-banner/show-1.jpg" class="w-100" alt="">
+                  <img src="{{ url_for('static', filename='images/slider/slider1.jpg') }}" class="w-100" alt="">
                   <div class="shows-content">
                      <h4 class="text-white mb-1">The Hero Camp</h4>
                      <div class="movie-time d-flex align-items-center">
@@ -70,6 +71,7 @@
          </div>
       </div>
    </section>
+{% endblock %}
    <!-- Slider End -->
 <!-- MainContent -->
 {% block content %}

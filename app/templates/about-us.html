@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    {{ title }}
+{% endblock %}
+
+
+<!-- MainContent -->
+{% block content %}
+    <div class="main-content">
+        <section class="container">
+            <div class="row h-100 align-items-center py-5">
+                <div class="col-lg-6">
+                    <h1 class="display-4">About us page</h1>
+                    <p class="lead text-primary mb-0">Page is crated by Vachagan Grigoryan.</p>
+                    <p class="lead text-muted">You can watch best movies here.</a>
+                    </p>
+                </div>
+                <div class="col-lg-6 d-none d-lg-block"><img
+                        src="{{ url_for('static', filename='images/about-us.png') }}" alt=""
+                        class="img-fluid"></div>
+            </div>
+            {#            <div class="row">#}
+
+            <div class="row text-center py-5 justify-content-center ">
+                <div class="col-12 mb-4">
+                    <h2 class="display-4 font-weight-light">Our team</h2>
+                    <p class="font-italic text-primary">The best team.</p>
+                </div>
+                <!-- Team item-->
+                <div class="col col-md-3">
+                    <div class="bg-secondary rounded shadow-sm py-5 px-4"><img
+                            src="{{ url_for('static', filename='images/user/user.jpg') }}"
+                            alt="" width="100" class="img-fluid rounded-circle mb-3 img-thumbnail shadow-sm">
+                        <h5 class="mb-0">Vachagan Grigoryan</h5><span class="small text-uppercase text-gold">Python Developer</span>
+                        <ul class="social mb-0 list-inline mt-3">
+                            <li class="list-inline-item"><a href="https://www.facebook.com/Grigoryan.Vachagan/"
+                                                            class="social-link"><i
+                                    class="fa fa-facebook-f"></i></a></li>
+                            <li class="list-inline-item"><a href="https://www.linkedin.com/in/vachagan-grigoryan/"
+                                                            class="social-link"><i
+                                    class="fa fa-linkedin"></i></a></li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- End-->
+            </div>
+
+
+        </section>
+    </div>
+{% endblock %}

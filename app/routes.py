@@ -8,8 +8,10 @@ from . import db
 # from .forms import MovieSearchForm
 from .models import Movie, People, Genre
 
+from random import randrange, choices
 
-# from random import sample
+def_per_page = app.config.get('PER_PAGE')
+
 
 # Ensure responses aren't cached
 @app.after_request
@@ -25,40 +27,43 @@ def page_not_found(e):
     return render_template('404.html'), 404
 
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/')
 def index():
-    # search_form = MovieSearchForm(request.form)
-    # if request.method == 'POST':
-    #     return search(search_form)
-
-    movies = Movie.query.all()
-    return render_template("index.html", title="All Movies", movies=movies)
+    movies = choices(Movie.query.all(), k=app.config.get('MOVIE_COUNT'))
+    return render_template("index.html", title="Home", movies=movies)
 
 
-@app.route('/movies', methods=['GET', 'POST'])
-def movies():
+@app.route('/movies', endpoint='movies')
+@app.route('/movies/<genre>', endpoint='movies_genre')
+def movies(genre=None):
     try:
-        page, per_page = int(request.args.get('page', 1)), int(request.args.get('per_page', 10))
+        page, per_page = int(request.args.get('page', 1)), int(request.args.get('per_page', def_per_page))
     except Exception:
         return redirect(url_for('movies'))
 
-    movies = Movie.query.paginate(page, per_page, error_out=False, max_per_page=20)
-    return render_template(
-        "movie-category.html",
-        title="All Movies",
-        movies=movies,
-    )
+    if genre:
+        movies = Movie.query.filter(
+            Movie.genres.any(Genre.name == genre)
+        ).paginate(page, per_page, error_out=False, max_per_page=20)
+    else:
+        movies = Movie.query.paginate(page, per_page, error_out=False, max_per_page=20)
+
+    genres = Genre.query.all()
+    return render_template("movie-category.html", title="All Movies", movies=movies, genres=genres, genre=genre)
 
 
-@app.route('/movies/<int:movie_id>', methods=['GET', 'POST'])
+@app.route('/movies/<int:movie_id>')
 def movies_detail(movie_id):
     movie = Movie.query.filter_by(id=movie_id).first_or_404()
-    movies = Movie.query.filter(Movie.genres.any(Genre.id.in_(g.id for g in movie.genres)), Movie.id != movie.id).all()
+    movies = choices(Movie.query.filter(
+        Movie.genres.any(Genre.id.in_(g.id for g in movie.genres)),
+        Movie.id != movie.id
+    ).all(), k=app.config.get('MOVIE_COUNT'))
 
     return render_template('movie-details.html', movie=movie, movies=movies)
 
 
-@app.route('/people/<int:people_id>', methods=['GET', 'POST'])
+@app.route('/people/<int:people_id>')
 def people_detail(people_id):
     people = People.query.filter_by(id=people_id).first_or_404()
     directed_or_wrote_movies = Movie.query.filter(db.or_(
@@ -73,10 +78,11 @@ def people_detail(people_id):
     return render_template('people-details.html', people=people, movies=movies)
 
 
-@app.route('/shows', methods=['GET', 'POST'])
+@app.route('/shows')
 def shows():
-    return render_template(
-        "show-category.html",
-        title="All Movies",
-        movies=movies,
-    )
+    return render_template("show-category.html", title="All Shows")
+
+
+@app.route('/about')
+def about():
+    return render_template("about-us.html", title="About us")

@@ -58,18 +58,9 @@
                 Genres
             </button>
             <div class="dropdown-menu three-column" aria-labelledby="dropdownMenuButton">
-                <a class="dropdown-item" href="#">Hindi</a>
-                <a class="dropdown-item" href="#">Tamil</a>
-                <a class="dropdown-item" href="#">Punjabi</a>
-                <a class="dropdown-item" href="#">English</a>
-                <a class="dropdown-item" href="#">Comedies</a>
-                <a class="dropdown-item" href="#">Action</a>
-                <a class="dropdown-item" href="#">Romance</a>
-                <a class="dropdown-item" href="#">Dramas</a>
-                <a class="dropdown-item" href="#">Bollywood</a>
-                <a class="dropdown-item" href="#">Hollywood</a>
-                <a class="dropdown-item" href="#">Children & Family</a>
-                <a class="dropdown-item" href="#">Award-Winning</a>
+                {% for genre in genres %}
+                    <a class="dropdown-item" href="{{ url_for('movies_genre', genre=genre.name) }}">{{ genre }}</a>
+                {% endfor %}
             </div>
         </div>
     </section>
@@ -91,24 +82,23 @@
                             <a href="{{ url_for('movies_detail', movie_id=movie.id) }}">
                                 <div class="cellphone-container">
                                     <div class="movie-card">
-                                        <div class="menu"><i class="material-icons"></i></div>
                                         <div class="movie-img" style="background-image: url({{ movie.avatar }});"></div>
                                         <div class="text-movie-cont">
                                             <div class="mr-grid">
-                                                <div class="col1">
-                                                    <h5>{{ movie.title }}</h5>
-                                                    <ul class="movie-gen">
-                                                        <li>{{ movie.runtime }} /</li>
-                                                        <li>{{ movie.get_genres() }}</li>
-                                                    </ul>
-                                                </div>
+                                                <h5>{{ movie.title }}</h5>
+                                                <ul class="movie-gen">
+                                                    <li>{{ movie.runtime }} /</li>
+                                                    <li>{{ movie.get_genres() }}</li>
+                                                </ul>
                                             </div>
-                                            <div class="mr-grid action-row">
-                                                <div class="col2">
-                                                    <div class="watch-btn">
-                                                        <h6><i class="material-icons">&#xE037;</i>WATCH TRAILER</h6>
-                                                    </div>
-                                                </div>
+                                            <div class="mr-grid">
+                                                <a href="{{ movie.trailer }}"  class="video-open playbtn">
+                                                    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="80px" height="80px" viewBox="0 0 213.7 213.7" enable-background="new 0 0 213.7 213.7" xml:space="preserve">
+                                                        <polygon class='triangle' fill="none" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" points="73.5,62.5 148.5,105.8 73.5,149.1 "/>
+                                                        <circle class='circle' fill="none" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" cx="106.8" cy="106.8" r="103.3"/>
+                                                    </svg>
+                                                    <span class="w-trailor">Watch Trailer</span>
+                                                </a>
                                             </div>
                                         </div>
                                     </div>
@@ -120,7 +110,7 @@
                 <div class="row mt-5">
                     <div class="col-sm-12">
                         {% from "pagination.html" import render_pagination with context %}
-                        {{ render_pagination(movies, 'movies') }}
+                        {{ render_pagination(movies, request.endpoint, genre=genre) }}
                     </div>
                 </div>
             </div>
@@ -142,25 +132,25 @@
         {#                                                <div class="img-box">#}
         {#                                                    <img src="{{ movie.avatar }}" class="img-fluid" alt="">#}
         {#                                                </div>#}
-{#                                                        <div class="block-description">#}
-{#                                                            <h6>{{ movie.title }}</h6>#}
-{#                                                            <div class="movie-time d-flex align-items-center my-2">#}
-{#                                                                <div class="badge badge-secondary p-1 mr-2">{{ movie.rating }}</div>#}
-{#                                                                <span class="text-white">{{ movie.runtime }}</span>#}
-{#                                                            </div>#}
+        {#                                                        <div class="block-description">#}
+        {#                                                            <h6>{{ movie.title }}</h6>#}
+        {#                                                            <div class="movie-time d-flex align-items-center my-2">#}
+        {#                                                                <div class="badge badge-secondary p-1 mr-2">{{ movie.rating }}</div>#}
+        {#                                                                <span class="text-white">{{ movie.runtime }}</span>#}
+        {#                                                            </div>#}
         {#                                                    <div class="hover-buttons">#}
         {#                                       <span class="btn btn-hover"><i class="fa fa-play mr-1" aria-hidden="true"></i>#}
         {#                                          Play Now#}
         {#                                       </span>#}
         {#                                                    </div>#}
         {#                                                </div>#}
-{#                                                        <div class="block-social-info">#}
-{#                                                            <ul class="list-inline p-0 m-0 music-play-lists">#}
-{#                                                                <li><span><i class="ri-volume-mute-fill"></i></span></li>#}
-{#                                                                <li><span><i class="ri-heart-fill"></i></span></li>#}
-{#                                                                <li><span><i class="ri-add-line"></i></span></li>#}
-{#                                                            </ul>#}
-{#                                                        </div>#}
+        {#                                                        <div class="block-social-info">#}
+        {#                                                            <ul class="list-inline p-0 m-0 music-play-lists">#}
+        {#                                                                <li><span><i class="ri-volume-mute-fill"></i></span></li>#}
+        {#                                                                <li><span><i class="ri-heart-fill"></i></span></li>#}
+        {#                                                                <li><span><i class="ri-add-line"></i></span></li>#}
+        {#                                                            </ul>#}
+        {#                                                        </div>#}
         {#                                            </div>#}
         {#                                        </a>#}
         {#                                    </li>#}

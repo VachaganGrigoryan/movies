@@ -10,6 +10,9 @@ class Config:
     SQLALCHEMY_DATABASE_URI = environ.get('DATABASE_URL')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
+    MOVIE_COUNT = 10
+    PER_PAGE = 12
+
 
 class ProductionConfig(Config):
     DEBUG = False
