@@ -2,7 +2,8 @@
 # Film Guide 
 - This is a movies project. The all content are scraped from [IMDB](www.imdb.com).
 - Project wrote using Python 3, Flask and BS4.
-
+![site](app/static/images/site.png)
+  
 # How to install
 - clone this repository
 - create the python virtual environment.
