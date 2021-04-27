@@ -44,7 +44,8 @@
                             </div>
                         </a>
                         <a class="navbar-brand" href="{{ url_for('index') }}">
-                            <img class="img-fluid logo" src="{{ url_for('static', filename='images/logo.png') }}" alt="streamit"/>
+                            <img class="img-fluid logo" src="{{ url_for('static', filename='images/logo.png') }}"
+                                 alt="streamit"/>
                         </a>
                         <div class="collapse navbar-collapse" id="navbarSupportedContent">
                             <div class="menu-main-menu-container">
@@ -74,10 +75,12 @@
                                                 <i class="ri-search-line"></i>
                                             </a>
                                             <div class="search-box iq-search-bar">
-                                                <form action="#" class="searchbox">
+                                                <form action="{{ url_for('movies') }}" method="get" class="searchbox">
                                                     <div class="form-group position-relative">
-                                                        <input type="text" class="text search-input font-size-12"
-                                                               placeholder="type here to search...">
+                                                        <input class="text search-input font-size-12"
+                                                               type="search" placeholder="type here to search..."
+                                                               aria-label="Search"
+                                                               name='keyword' value="{{ keyword }}"/>
                                                         <i class="search-link ri-search-line"></i>
                                                     </div>
                                                 </form>
@@ -150,10 +153,12 @@
                                         <i class="ri-search-line"></i>
                                     </a>
                                     <div class="search-box iq-search-bar d-search">
-                                        <form action="/" method="post" class="searchbox">
+                                        <form action="{{ url_for('movies') }}" method="get" class="searchbox">
                                             <div class="form-group position-relative">
-                                                <input type="text" class="text search-input font-size-12"
-                                                       placeholder="type here to search..." id="search">
+                                                <input class="text search-input font-size-12"
+                                                       type="search" placeholder="type here to search..."
+                                                       aria-label="Search"
+                                                       name='keyword' value="{{ keyword }}"/>
                                                 <i class="search-link ri-search-line"></i>
                                             </div>
                                         </form>
@@ -162,7 +167,8 @@
                                 <li class="nav-item nav-icon">
                                     <a href="#" class="iq-user-dropdown search-toggle p-0 d-flex align-items-center"
                                        data-toggle="search-toggle">
-                                        <img src="{{ url_for('static', filename='images/user/user.jpg') }}" class="img-fluid avatar-40 rounded-circle"
+                                        <img src="{{ url_for('static', filename='images/user/user.jpg') }}"
+                                             class="img-fluid avatar-40 rounded-circle"
                                              alt="user">
                                     </a>
                                     <div class="iq-sub-dropdown iq-user-dropdown">

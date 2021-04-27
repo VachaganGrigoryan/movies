@@ -1,14 +1,12 @@
-import math
-
-from flask import flash, jsonify, redirect, render_template, request, make_response, url_for
+from flask import redirect, render_template, request, url_for
 
 from flask import current_app as app
 
 from . import db
-# from .forms import MovieSearchForm
+
 from .models import Movie, People, Genre
 
-from random import randrange, choices
+from random import choices
 
 def_per_page = app.config.get('PER_PAGE')
 
@@ -40,8 +38,13 @@ def movies(genre=None):
         page, per_page = int(request.args.get('page', 1)), int(request.args.get('per_page', def_per_page))
     except Exception:
         return redirect(url_for('movies'))
+    keyword = request.args.get('keyword', '')
 
-    if genre:
+    if keyword:
+        movies = Movie.query.filter(
+            Movie.title.ilike(f'%{keyword}%')
+        ).paginate(page, per_page, error_out=False, max_per_page=20)
+    elif genre:
         movies = Movie.query.filter(
             Movie.genres.any(Genre.name == genre)
         ).paginate(page, per_page, error_out=False, max_per_page=20)

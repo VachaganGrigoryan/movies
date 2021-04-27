@@ -1,10 +1,12 @@
 {% macro render_pagination(pagination, endpoint) %}
+    {% set qs = kwargs.update(request.args.to_dict()) %}
+    {% set qs = kwargs.pop('page', 'some') %}
     <nav aria-label="Page navigation">
         <ul class="pagination pagination-circle justify-content-center pg-primary">
             {% if movies.has_prev %}
                 <li class="page-item">
                     <a class="page-link text-primary"
-                       href="{{ url_for(endpoint, per_page=movies.per_page, page=movies.prev_num, **kwargs) }}">❮</a>
+                       href="{{ url_for(endpoint, page=movies.prev_num, **kwargs) }}">❮</a>
                 </li>
             {% else %}
                 <li class="page-item disabled"><a class="page-link text-secondary" href="#" tabindex="-1">❮</a>
@@ -15,7 +17,7 @@
                     {% if page != pagination.page %}
                         <li class="page-item">
                             <a class="page-link text-primary"
-                               href="{{ url_for(endpoint, per_page=movies.per_page, page=page, **kwargs) }}">{{ page }}</a>
+                               href="{{ url_for(endpoint, page=page, **kwargs) }}">{{ page }}</a>
                         </li>
                     {% else %}
                         <li class="page-item active">
@@ -31,7 +33,7 @@
             {% if movies.has_next %}
                 <li class="page-item">
                     <a class="page-link text-primary"
-                       href="{{ url_for(endpoint, per_page=movies.per_page, page=movies.next_num, **kwargs) }}">❯</a>
+                       href="{{ url_for(endpoint, page=movies.next_num, **kwargs) }}">❯</a>
                 </li>
             {% else %}
                 <li class="page-item disabled"><a class="page-link text-secondary" href="#" tabindex="-1">❯</a>
