@@ -1,12 +1,10 @@
-from flask import redirect, render_template, request, url_for
+from random import sample
 
 from flask import current_app as app
+from flask import redirect, render_template, request, url_for
 
 from . import db
-
 from .models import Movie, People, Genre
-
-from random import choices
 
 def_per_page = app.config.get('PER_PAGE')
 
@@ -27,7 +25,11 @@ def page_not_found(e):
 
 @app.route('/')
 def index():
-    movies = choices(Movie.query.all(), k=app.config.get('MOVIE_COUNT'))
+    movies = Movie.query.all()
+    try:
+        movies = sample(movies, k=app.config.get('MOVIE_COUNT'))
+    except:
+        pass
     return render_template("index.html", title="Home", movies=movies)
 
 
@@ -58,10 +60,14 @@ def movies(genre=None):
 @app.route('/movies/<int:movie_id>')
 def movies_detail(movie_id):
     movie = Movie.query.filter_by(id=movie_id).first_or_404()
-    movies = choices(Movie.query.filter(
+    movies = Movie.query.filter(
         Movie.genres.any(Genre.id.in_(g.id for g in movie.genres)),
         Movie.id != movie.id
-    ).all(), k=app.config.get('MOVIE_COUNT'))
+    ).all()
+    try:
+        movies = sample(movies, k=app.config.get('MOVIE_COUNT'))
+    except:
+        pass
 
     return render_template('movie-details.html', movie=movie, movies=movies)
 
